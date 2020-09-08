@@ -47,15 +47,28 @@ router.post('/', (req, res) => {
 })
 
 //GET Find Product Details by id
-//GET todos by id
 router.get('/:id', function (req, res) {
   models.product.findByPk(req.params.id)
-      .then((product) => {
-          res.json(product);
-      })
-      .catch((err) => {
-          res.status(500).json(err)
-      })
+    .then((product) => {
+      res.json(product);
+    })
+    .catch((err) => {
+      res.status(500).json(err)
+    })
+});
+
+//DELETE Products by id
+router.delete('/:id', function (req, res) {
+  models.product.destroy({
+    returning: true,
+    where: {
+      id: req.params.id
+    }
+  }).then((product) => {
+    res.json(product);
+  }).catch((err) => {
+    res.status(500).json(err)
+  })
 });
 
 
