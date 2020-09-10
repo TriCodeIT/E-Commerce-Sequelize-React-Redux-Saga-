@@ -7,17 +7,45 @@ const path = require('path');
 
 const server_URL = "http://localhost:3000";
 
-/* GET products listing. */
+
+/* GET products listing by Pagination */
 router.get('/', function (req, res, next) {
-  models.product.findAll({
+
+  let page = Number(req.header('page')) || 1;
+
+  let limit = Number(req.header('limit')) || 4;
+  
+  let offset = (page - 1) * limit;
+
+  models.product.findAndCountAll({
+    order: [
+      ['createdAt', 'ASC']
+    ],
+    limit,
+    offset
   })
-    .then((products) => {
-      res.json(products);
+    .then(products => {
+      let numOfPages = Math.ceil(products.count / limit);
+
+      let result = products.rows.map(item => ({
+        ...item.dataValues,
+        image: item.dataValues.image ? server_URL + item.dataValues.image[0] : null
+      }))
+
+      res.json({
+        numOfPages,
+        result
+      })
+      
     })
-    .catch((err) => {
-      res.json(err)
+    .catch(err => {
+      res.json({
+        error: true,
+        message: err
+      })
     })
-})
+});
+
 
 // POST Add Products
 router.post('/', (req, res) => {
@@ -66,6 +94,7 @@ router.post('/', (req, res) => {
   })
 })
 
+
 //GET Find Product Details by id
 router.get('/:id', (req, res) => {
 
@@ -90,6 +119,7 @@ router.get('/:id', (req, res) => {
     })
 })
 
+
 //DELETE Products by id
 router.delete('/:id', function (req, res) {
   models.product.destroy({
@@ -103,6 +133,7 @@ router.delete('/:id', function (req, res) {
     res.status(500).json(err)
   })
 });
+
 
 //UPDATE Products by id, when someone buy it
 router.put('/:id', (req, res) => {
