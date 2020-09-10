@@ -47,10 +47,24 @@ router.get('/', function (req, res, next) {
 });
 
 
+
 // POST Add Products
 router.post('/', (req, res) => {
 
-  let { title, rate, description, price, brand, detailProduct, category, fileId, color, capacities, stock, size } = req.body;
+  let { 
+    title, 
+    rate, 
+    description, 
+    price, 
+    brand, 
+    detailProduct, 
+    category, 
+    fileId, 
+    color, 
+    capacities, 
+    stock, 
+    size 
+  } = req.body;
  
   let { file } = req.files;
 
@@ -80,7 +94,7 @@ router.post('/', (req, res) => {
             ...product.dataValues,
             image: server_URL + product.dataValues.image[0]
           }
-          console.log('RESULT DI BACKEND >>>', result);
+          console.log('RESULT ON BACKEND >>>', result);
           res.json(result)
         })
         .catch(err => {
