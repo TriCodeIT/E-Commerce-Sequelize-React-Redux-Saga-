@@ -71,5 +71,22 @@ router.delete('/:id', function (req, res) {
   })
 });
 
+//UPDATE Products by id
+router.put('/:id', function (req, res) {
+  models.product.update({
+    title: req.body.title,
+    testimonials : req.body.testimonials
+  }, {
+    returning: true,
+    where: {
+        id: req.params.id
+    }
+  }).then((todo) => {
+    res.json(todo);
+  }).catch((err) => {
+    res.status(500).json(err)
+  })
+});
+
 
 module.exports = router;
